@@ -1,0 +1,506 @@
+---
+title: "Programming and Data Management Final Assignment"
+author: "Akshay Delity"
+format: html
+editor: visual
+---
+
+## Data Summary
+
+The 2020 Residential Energy Consumption Survey (RECS), administered by the Energy Information Administration (EIA) examines household consumption and expenditure data across the US. This Quarto document (<https://github.com/spruce-climber/energy-insecurity-pdm-final.git>) will utilize the gathered results from this survey to examine energy insecurity measures in the DMV in order to sh ow the possible insights RECS analysis can generate. We will look at the following variables:
+
++----------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Variable Name                    | Description                                                                                                                                                                                                                                                                                                    |
++==================================+================================================================================================================================================================================================================================================================================================================+
+| Energy Insecurity                | EIA defines energy insecurity as a household that experiences any of the following incidents:                                                                                                                                                                                                                  |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+| (ENERGY_INSEC)                   | 1.  Reducing or forgoing food or medicine to pay energy costs (SCALEB)                                                                                                                                                                                                                                         |
+|                                  | 2.  Leaving home at unhealthy temperature (SCALEG)                                                                                                                                                                                                                                                             |
+|                                  | 3.  Receiving disconnect or delivery stop notice (SCALEE)                                                                                                                                                                                                                                                      |
+|                                  | 4.  Unable to use heating equipment (NOHEATBROKE, NOHEATEL, NOHEATNG, NOHEATBULK)                                                                                                                                                                                                                              |
+|                                  | 5.  Unable to use air-conditioning equipment (NOACBROKE, NOACEL)                                                                                                                                                                                                                                               |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+|                                  | This is an aggregate measure                                                                                                                                                                                                                                                                                   |
++----------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Household Income                 | Annual gross household income for the past year                                                                                                                                                                                                                                                                |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+| (MONEYPY)                        | 1.  Less than \$5,000                                                                                                                                                                                                                                                                                          |
+|                                  | 2.  \$5,000 - \$7,499                                                                                                                                                                                                                                                                                          |
+|                                  | 3.  \$7,500 - \$9,999                                                                                                                                                                                                                                                                                          |
+|                                  | 4.  \$10,000 - \$12,499                                                                                                                                                                                                                                                                                        |
+|                                  | 5.  \$12,500 - \$14,999                                                                                                                                                                                                                                                                                        |
+|                                  | 6.  \$15,000 - \$19,999                                                                                                                                                                                                                                                                                        |
+|                                  | 7.  \$20,000 - \$24,999                                                                                                                                                                                                                                                                                        |
+|                                  | 8.  \$25,000 - \$29,999                                                                                                                                                                                                                                                                                        |
+|                                  | 9.  \$30,000 - \$34,999                                                                                                                                                                                                                                                                                        |
+|                                  | 10. \$35,000 - \$39,999                                                                                                                                                                                                                                                                                        |
+|                                  | 11. \$40,000 - \$49,999                                                                                                                                                                                                                                                                                        |
+|                                  | 12. \$50,000 - \$59,999                                                                                                                                                                                                                                                                                        |
+|                                  | 13. \$60,000 - \$74,999                                                                                                                                                                                                                                                                                        |
+|                                  | 14. \$75,000 - \$99,999                                                                                                                                                                                                                                                                                        |
+|                                  | 15. \$100,000 - \$149,999                                                                                                                                                                                                                                                                                      |
+|                                  | 16. \$150,000 or more                                                                                                                                                                                                                                                                                          |
++----------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Solar                            | On-site electricity generation from solar.                                                                                                                                                                                                                                                                     |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+| (SOLAR)                          | 0 indicates no presence                                                                                                                                                                                                                                                                                        |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+|                                  | 1 indicates presence                                                                                                                                                                                                                                                                                           |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+|                                  | -2 indicates not applicable                                                                                                                                                                                                                                                                                    |
++----------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Smart Meter                      | Home has an electricity smart meter                                                                                                                                                                                                                                                                            |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+| (SMARTMETER)                     | 0 indicates no presence                                                                                                                                                                                                                                                                                        |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+|                                  | 1 indicates presence                                                                                                                                                                                                                                                                                           |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+|                                  | -4 indicates respondent did not know                                                                                                                                                                                                                                                                           |
++----------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Climate Zone (IECC_climate_code) | 2012 International Energy Conservation Code Climate code                                                                                                                                                                                                                                                       |
+|                                  |                                                                                                                                                                                                                                                                                                                |
+|                                  | 1A, 2A, 2B, 3A, 3B, 3C, 4A, 4B, 4C, 5A, 5B, 5C, 6A, 6B, 7A, 7AK, 7B, 8AK. In the case of DC, Maryland, and Virginia, these codes are limited to 3A (Warm Humid), 4A (Mixed Humid), and 5A (Cool Humid).                                                                                                        |
++----------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| NWEIGHT                          | Final Analysis Weight. Sample weights assigned to ensure survey results represent the broader national/state characteristics. These are calculated by US EIA by taking into account different probabilities in selection, rates of response, and adjustment for the U.S. Census Bureau housing unit estimates. |
++----------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+Source: U.S. Energy Information Administration, 2020 RECS Survey Data, U.S. EIA, 2023-03-01. <https://www.eia.gov/consumption/residential/data/2020/>
+
+The RECS sample design recently was updated to allow for state level estimations of household characteristics and energy use in addition to the previously included census regions and divisions. EIA weights sampled housing units to represent the total in-scope population using U.S. Census Bureau housing unit estimates. EIA also utilizes a jackknife method to produce replicate weights to calculate standard errors of an estimate of interest. This will require use of the survey and dplyr packages in order to properly calculate summary statistics. Another challenge with utilizing RECS data is the unreliability of survey respondents. As seen in the table above, several data fields have entries for "not applicable" or "do not know". We will filter these results out in our analysis in the interest of certainty, but it should be acknowledged that this may skew our findings from reality in unforeseeable ways. For scoping reasons, we are only looking at data for Maryland, Virginia, and DC. This means that, prior to application of NWEIGHT, there are 1031 counts for each variable, each representing a surveyed household. The unadulterated summary statistics of the RECS data subset we are working with are displayed in the table below.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(srvyr)
+library(knitr)
+library(kableExtra)
+library(tidyr)
+
+# Read in RECS 2020
+recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+
+# Subset for Virginia, Maryland, and DC
+recs_DMV_subset <- subset(recs_raw, 
+                         state_name %in% c("Virginia", "Maryland", "District of Columbia"), 
+                         c(state_name, MONEYPY, SOLAR, SMARTMETER, 
+                           SCALEB, SCALEE, SCALEG, NOHEATBROKE, NOHEATEL, NOHEATNG, 
+                           NOHEATBULK, NOACBROKE, NOACEL, NWEIGHT))
+
+# Energy insecurity variable, following EIA definition
+recs_DMV <- recs_DMV_subset %>%
+  mutate(
+    ENERGY_INSECURITY = ifelse(
+      SCALEB== 1 | SCALEE== 1 | SCALEG== 1 | 
+      NOHEATBROKE== 1 | NOHEATEL== 1 | 
+      NOHEATNG== 1 | NOHEATBULK== 1 | 
+      NOACBROKE== 1 | NOACEL== 1, 1, 0)
+  ) %>%
+  select(-SCALEB, -SCALEE, -SCALEG, -NOHEATBROKE, -NOHEATEL, 
+         -NOHEATNG, -NOHEATBULK, -NOACBROKE, -NOACEL)
+
+# Initiate state summary list
+state_summaries <- list()
+
+for(state in unique(recs_DMV$state_name)) {
+  state_data <- recs_DMV %>% #filter by state
+    filter(state_name == state) %>%
+    select(MONEYPY, SOLAR, SMARTMETER, ENERGY_INSECURITY, NWEIGHT) # select all variables
+  
+  # Summary stats
+  summary_stats <- data.frame(
+    Mean = sapply(state_data, function(x) round(mean(x, na.rm= TRUE), 2)),
+    Median = sapply(state_data,function(x) round(median(x, na.rm= TRUE), 2)),
+    Min = sapply(state_data,function(x) min(x, na.rm= TRUE)),
+    Max = sapply(state_data, function(x) max(x, na.rm= TRUE)),
+    SD = sapply(state_data, function(x) round(sd(x, na.rm= TRUE), 2)),
+    N = sapply(state_data, function(x) sum(!is.na(x)))
+  )
+  
+  state_summaries[[state]] <- summary_stats
+}
+
+# DC table
+kable(state_summaries[["District of Columbia"]], 
+      caption = "Summary Statistics for District of Columbia",
+      booktabs = TRUE,
+      digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE,
+                position = "center")
+
+# MD table
+kable(state_summaries[["Maryland"]], 
+      caption = "Summary Statistics for Maryland",
+      booktabs = TRUE,
+      digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE,
+                position = "center")
+
+# VA table
+kable(state_summaries[["Virginia"]], 
+      caption = "Summary Statistics for Virginia",
+      booktabs = TRUE,
+      digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE,
+                position = "center")
+```
+
+The selected variables will tell us a story about energy insecurity, and perhaps prepare us to suggest policy solutions. Energy insecurity is a collective measure of non-quantitative data that EIA itself defines as the cumulative frequency of events such as utility disconnects or non-quantitative metrics that indicate insecurity. EIA itself describes energy insecurity as the agglomeration of several different survey questions. Presence of on-site solar generation and/or smart meters could be remedies to energy insecurity. Furthermore, we may be able to glean insights by controlling for income or climate zone, both of which affect a households ability to deal with inclement weather, extreme heat or cold, or other challenges that affect household energy supply.
+
+## Energy Insecurity
+
+As seen in the figure below, slightly under 10% of households in the DMV experienced some form of energy insecurity in 2020.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+# Read the data
+recs_raw<- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+
+# Subset for DMV
+recs_DMV_subset<- subset(recs_raw, 
+                          state_name %in% c("Virginia", "Maryland", "District of Columbia"), 
+                          c(state_name, MONEYPY, IECC_climate_code, SOLAR, SMARTMETER, SCALEB, SCALEE, SCALEG, NOHEATBROKE, NOHEATEL, NOHEATNG, NOHEATBULK, NOACBROKE, NOACEL, NWEIGHT))
+
+# Create energy insecurity variable following EIA definition 
+recs_DMV_insec<- recs_DMV_subset %>%
+  mutate(ENERGY_INSECURITY = ifelse(
+    SCALEB== 1 | SCALEE== 1 | SCALEG== 1 | 
+    NOHEATBROKE== 1 | NOHEATEL== 1 | 
+    NOHEATNG== 1 | NOHEATBULK== 1 | 
+    NOACBROKE== 1 | NOACEL== 1, 1, 0))
+
+# Remove the individual energy insecurity components, we will work with the composite from here on out
+recs_DMV<- recs_DMV_insec %>%
+  select(-SCALEB, -SCALEE, -SCALEG, -NOHEATBROKE, -NOHEATEL, 
+         -NOHEATNG, -NOHEATBULK, -NOACBROKE, -NOACEL)
+
+# Arrange by state and move NWEIGHT to the end for internal viz
+recs_DMV<- recs_DMV %>%
+  arrange(state_name) %>%
+  select(-NWEIGHT, everything(), NWEIGHT)
+
+# Create survey design object
+srvy_DMV<- recs_DMV %>%
+  as_survey_design(weights = NWEIGHT)
+
+# Bar chart for energy insecurity
+ggplot(recs_DMV, aes(x = factor(ENERGY_INSECURITY), weight = NWEIGHT)) +
+  geom_bar(
+    fill = c("forestgreen", "red"),
+    color = "black",
+    width = 0.7
+  ) +
+  
+  # labels
+  geom_text(
+    stat = "count", 
+    aes(label = format(round(..count..), big.mark = ",")),
+    vjust = 1.5,
+    size = 4
+  ) +
+  scale_x_discrete(
+    labels = c("No Energy Insecurity", "Energy Insecurity"),
+    name = "Household Energy Insecurity Status"
+  ) +
+  
+  scale_y_continuous(
+    labels = scales::comma,
+    name = "Number of Households"
+  ) +
+  
+  labs(
+    title = "Energy Insecurity in DC, Maryland, and Virginia Households",
+    subtitle = "Respondents to 2020 RECS Survey Data"
+  ) +
+  theme_minimal()
+
+
+```
+
+Here is a breakdown of energy insecurity by state alongside some important household energy infrastructure and income data.
+
+```{r, echo=FALSE, warning=FALSE}
+
+# read in data again
+recs_raw<- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+
+# Subset again
+recs_DMV_subset <- subset(recs_raw, 
+                         state_name %in% c("Virginia", "Maryland", "District of Columbia"), 
+                         c(state_name, MONEYPY, IECC_climate_code, SOLAR, SMARTMETER, 
+                           SCALEB, SCALEE, SCALEG, NOHEATBROKE, NOHEATEL, NOHEATNG, 
+                           NOHEATBULK, NOACBROKE, NOACEL, NWEIGHT))
+
+# energy insecurity filtering and income quartile creation
+recs_DMV <- recs_DMV_subset %>%
+  mutate(
+    ENERGY_INSECURITY = ifelse(
+      SCALEB== 1 | SCALEE== 1 | SCALEG== 1 | 
+      NOHEATBROKE== 1 | NOHEATEL== 1 | 
+      NOHEATNG== 1 | NOHEATBULK== 1 | 
+      NOACBROKE== 1 | NOACEL== 1, 1, 0),
+    # Create income category groups
+    INCOME_GROUP = case_when(
+      MONEYPY %in% 1:4 ~ "Low Income (1-4)",
+      MONEYPY %in% 5:8 ~ "Lower Middle (5-8)",
+      MONEYPY %in% 9:12 ~ "Upper Middle (9-12)",
+      MONEYPY %in% 13:16 ~ "High Income (13-16)"
+    )
+  ) %>%
+  select(-SCALEB, -SCALEE, -SCALEG, -NOHEATBROKE, -NOHEATEL, 
+         -NOHEATNG, -NOHEATBULK, -NOACBROKE, -NOACEL)
+
+#Design object
+srvy_DMV<- recs_DMV %>%
+  as_survey_design(weights = NWEIGHT)
+
+# State rates for energy insecurity
+energy_insecurity_by_state <- srvy_DMV %>%
+  group_by(state_name) %>%
+  summarize(
+    energy_insecurity_rate = survey_mean(ENERGY_INSECURITY, vartype = "ci") * 100
+  )
+
+# Solar rates
+solar_by_state<- srvy_DMV %>%
+  group_by(state_name) %>%
+  summarize(
+    solar_rate = survey_mean(SOLAR == 1, vartype = "ci") * 100
+  )
+
+# Smart meter rates
+smartmeter_by_state<- srvy_DMV %>%
+  group_by(state_name) %>%
+  summarize(
+    smartmeter_rate = survey_mean(SMARTMETER == 1, vartype = "ci") * 100
+  )
+
+# Income distribution 
+income_by_state<- srvy_DMV %>%
+  group_by(state_name, INCOME_GROUP) %>%
+  summarize(
+    percentage = survey_mean(vartype = "ci") * 100
+  ) %>%
+  select(state_name, INCOME_GROUP, percentage)
+
+# Ready for table (pivot)
+income_wide <- income_by_state %>%
+  select(state_name, INCOME_GROUP, percentage) %>%
+  pivot_wider(
+    names_from = INCOME_GROUP,
+    values_from = percentage,
+    names_prefix = "income_"
+  )
+
+# Combined table
+combined_stats<- energy_insecurity_by_state %>%
+  select(state_name, energy_insecurity_rate) %>%
+  left_join(solar_by_state %>% select(state_name, solar_rate), by = "state_name") %>%
+  left_join(smartmeter_by_state %>% select(state_name, smartmeter_rate), by = "state_name") %>%
+  left_join(income_wide, by = "state_name") %>%
+  mutate(across(where(is.numeric), ~round(., 1))) #rounding for ease of publication
+
+# Create a nicer formatted table
+stat_table<- combined_stats %>%
+  select(
+    State = state_name,
+    `Energy Insecurity (%)` = energy_insecurity_rate,
+    `Solar Adoption (%)` = solar_rate,
+    `Smart Meter (%)` = smartmeter_rate,
+    `Lower Quartile Income (%)` = `income_Low Income (1-4)`,
+    `Lower Middle Quartile Income (%)` = `income_Lower Middle (5-8)`,
+    `Upper Middle Quartile Income (%)` = `income_Upper Middle (9-12)`,
+    `Upper Quartile Income (%)` = `income_High Income (13-16)`
+  )
+
+kable(stat_table, digits = 1, caption = "Household Energy Statistics by State")
+```
+
+As seen above, the states have similar rates of energy insecurity. However, Maryland, with the highest rate of energy insecurity, also has one of the highest rates of solar adoption and smart meter usage, the latter of which is well above DC and Virginia. However, all three jurisdictions are clearly quite wealthy, with only 15.9% of Maryland, 21.6% of Virginia, and 23.4% of DC falling below median income. We'll now examine the relationship between income, beneficial energy infrastructure presence, and energy insecurity, to help shape what direction further analysis will take.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(scales) #Using for color and label overlaps
+
+# Read the data (copy pasted from above chunks)
+recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+
+# Subset for Virginia, Maryland, and DC(copy pasted from above chunks)
+recs_DMV_subset <- subset(recs_raw, 
+                         state_name %in% c("Virginia", "Maryland", "District of Columbia"), 
+                         c(state_name, MONEYPY, SCALEB, SCALEE, SCALEG, NOHEATBROKE, NOHEATEL, 
+                           NOHEATNG, NOHEATBULK, NOACBROKE, NOACEL, NWEIGHT))
+
+# Energy insecurity (copy pasted from above chunks)
+recs_DMV<- recs_DMV_subset %>%
+  mutate(
+    ENERGY_INSECURITY = ifelse(
+      SCALEB == 1 | SCALEE == 1 | SCALEG == 1 | 
+      NOHEATBROKE == 1 | NOHEATEL == 1 | 
+      NOHEATNG == 1 | NOHEATBULK == 1 | 
+      NOACBROKE == 1 | NOACEL == 1, 1, 0),
+    # Convert MONEYPY to number by taking median of income brackets (done manually)
+    INCOME_VALUE = case_when(
+      MONEYPY== 1 ~ 2500,
+      MONEYPY== 2 ~ 7500,
+      MONEYPY== 3 ~ 12500,
+      MONEYPY== 4 ~ 17500,
+      MONEYPY== 5 ~ 22500,
+      MONEYPY== 6 ~ 27500,
+      MONEYPY== 7 ~ 34500,
+      MONEYPY== 8 ~ 44500,
+      MONEYPY== 9 ~ 59500,
+      MONEYPY== 10 ~ 84500,
+      MONEYPY== 11 ~ 124500,
+      MONEYPY== 12 ~ 174500,
+      MONEYPY== 13 ~ 224500,
+      MONEYPY== 14 ~ 274500,
+      MONEYPY== 15 ~ 349500,
+      MONEYPY== 16 ~ 500000  
+    )
+  ) %>%
+  select(-SCALEB, -SCALEE, -SCALEG, -NOHEATBROKE, -NOHEATEL, 
+         -NOHEATNG, -NOHEATBULK, -NOACBROKE, -NOACEL)
+
+# Survey object
+srvy_DMV<- recs_DMV %>%
+  as_survey_design(weights = NWEIGHT)
+
+# Calculate energy insecurity rate by income level and state
+energy_by_income_state <- srvy_DMV %>%
+  group_by(state_name, MONEYPY, INCOME_VALUE) %>%
+  summarize(
+    energy_insecurity_rate = survey_mean(ENERGY_INSECURITY, vartype = "se") * 100,
+    households = survey_total(vartype = "se")
+  ) %>%
+#CI for error bars, later removed error bars from graph because they were too noisy for this exploratory brief
+  mutate(
+    ci_lower = energy_insecurity_rate - 1.96 * energy_insecurity_rate_se,
+    ci_upper = energy_insecurity_rate + 1.96 * energy_insecurity_rate_se
+  )
+
+# Scatter plot, color for state and size for # of households
+ggplot(energy_by_income_state, 
+       aes(x = INCOME_VALUE, y = energy_insecurity_rate, 
+           color = state_name, size = households)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(aes(weight = households), # Trend lines
+              method = "loess", se = TRUE, alpha = 0.1, show.legend =FALSE) +
+  scale_x_continuous(
+    name = "Household Income ($)",
+    labels = scales::dollar_format(),
+    trans = "log10"  #Log for better viz
+  ) +
+  scale_y_continuous(
+    name = "Energy Insecurity Rate (%)",
+    limits = c(0, 100),
+    breaks = seq(0, 100, by = 10)
+  ) +
+  scale_color_brewer(
+    name = "State",
+    palette = "Dark2"
+  ) +
+  scale_size_continuous(
+    name = "Number of\nHouseholds",
+    breaks = c(1000, 10000, 50000, 100000),
+    labels = scales::comma
+  ) +
+  
+  # Add labels
+  labs(
+    title = "Energy Insecurity Rate by Household Income",
+    subtitle = "DC, Maryland, and Virginia - 2020 RECS Survey"
+  ) +
+  theme_minimal()
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+
+# Subset for Virginia, Maryland, and DC
+recs_DMV_subset <- subset(recs_raw, 
+                         state_name %in% c("Virginia", "Maryland", "District of Columbia"), 
+                         c(state_name, MONEYPY, SOLAR, SMARTMETER, SCALEB, SCALEE, SCALEG, 
+                           NOHEATBROKE, NOHEATEL, NOHEATNG, NOHEATBULK, NOACBROKE, NOACEL, NWEIGHT))
+
+# Create energy insecurity variable and technology adoption category
+recs_DMV <- recs_DMV_subset %>%
+  filter(!is.na(SOLAR) & !is.na(SMARTMETER)) %>%
+  mutate(
+    ENERGY_INSECURITY = ifelse(
+      SCALEB== 1 | SCALEE== 1 | SCALEG== 1 | 
+      NOHEATBROKE== 1 | NOHEATEL== 1 | 
+      NOHEATNG== 1 | NOHEATBULK== 1 | 
+      NOACBROKE== 1 | NOACEL== 1, 1, 0),
+    # Create "energy technology adoption" category to represent presence or absence of some combination of solar or smart meter
+    TECH_ADOPTION = case_when(
+      SOLAR== 1 & SMARTMETER== 1 ~ "Both Solar and Smart Meter",
+      SOLAR== 1 & SMARTMETER== 0 ~ "Solar Only",
+      SOLAR== 0 & SMARTMETER== 1 ~ "Smart Meter Only",
+      SOLAR== 0 & SMARTMETER== 0 ~ "Neither Solar nor Smart Meter"
+    )
+  ) %>%
+  # Remove the individual energy insecurity components
+  select(-SCALEB, -SCALEE, -SCALEG, -NOHEATBROKE, -NOHEATEL, 
+         -NOHEATNG, -NOHEATBULK, -NOACBROKE, -NOACEL)
+
+# Survey object
+srvy_DMV <- recs_DMV %>%
+  as_survey_design(weights = NWEIGHT)
+
+# Counts for tech adoption and energy insecurity by household using rsurvey
+energy_by_tech <- srvy_DMV %>%
+  group_by(ENERGY_INSECURITY, TECH_ADOPTION) %>%
+  summarize(
+    households = survey_total(vartype = "se")
+  ) %>%
+  ungroup()
+
+energy_by_tech$TECH_ADOPTION <- factor(
+  energy_by_tech$TECH_ADOPTION,
+  levels = c("Both Solar and Smart Meter", "Solar Only", 
+             "Smart Meter Only", "Neither Solar nor Smart Meter")
+)
+
+# Energy insecurity labels for graphing
+energy_by_tech$ENERGY_INSECURITY_LABEL <- factor(
+  energy_by_tech$ENERGY_INSECURITY,
+  levels = c(0, 1),
+  labels = c("No Energy Insecurity", "Energy Insecurity")
+)
+energy_by_tech <- energy_by_tech %>%
+  filter(!is.na(TECH_ADOPTION) & !is.na(ENERGY_INSECURITY_LABEL) & !is.na(households)) # Continued to get NAs here so included an extra removal step in case.
+#Bar chart, ascending by household count for different tech adoption levels
+ggplot(energy_by_tech, aes(x = reorder(TECH_ADOPTION, households), y = households, fill = ENERGY_INSECURITY_LABEL)) +
+  geom_col(position = "stack", color = "black", width = 0.7) +
+  
+  scale_fill_brewer(
+    palette = "Set1",
+    name = "Energy Insecurity Status"
+  ) +
+  scale_y_continuous(
+    name = "Number of Households",
+    labels = scales::comma
+  ) +
+  scale_x_discrete(
+    name = "Household Energy Technology Adoption"
+  ) +
+  coord_flip() + # to avoid overlapping labels
+  
+  labs(
+    title = "Energy Insecurity and Energy Technology Adoption",
+    subtitle = "Households in DC, Maryland, and Virginia - 2020 RECS Survey"
+  ) +
+  theme_minimal()
+
+
+```
+
+It is clear that income is a strong negative indicator of energy insecurity. The observed difference in trend between DC and the states of Maryland and Virginia is to be expected, as a city to state comparison is apples to oranges, but the linear trend among all three is clear. The second graph expands on the effect of energy infrastructure/technology adoption on energy insecurity - households with solar and smart meters or solar energy alone have no energy insecurity, at least in the DMV. Households with only smart meters actually had a slightly higher rate of energy insecurity than households with no energy technology adoption. These two types of households comprise the vast majority of households in the DMV. Logical next steps would be to examine some multivariate regression models of these variables to establish causality, and to utilize data sets that track rates of energy insecurity annually, as opposed to RECS which only uses an indicator variable for households that have experienced energy insecurity at least once in the past year. Similar quantitative data like daily electricity usage or daily temperature would also be useful to compare households. These analyses could help establish whether energy technology adoption is an effective intervention to prevent energy insecurity, and allow such interventions to target households where energy insecurity is the most severe. The next steps would be to:
+
+1.  Run deeper analyses using RECS and/or other public datasets, such as multivariate regressions
+2.  Acquire electricity data sets from utilities/ISOs & daily local weather data from NOAA
+3.  Prepare a study or find existing ones examining frequency of "energy insecurity events"
+4.  Analyze how weather, electricity usage, and technology adoption influence the frequency or severity of energy insecurity events.
