@@ -77,7 +77,7 @@ library(kableExtra)
 library(tidyr)
 
 # Read in RECS 2020
-recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+recs_raw <- read_csv("recs2020_public_v7.zip")
 
 # Subset for Virginia, Maryland, and DC
 recs_DMV_subset <- subset(recs_raw, 
@@ -155,8 +155,8 @@ As seen in the figure below, slightly under 10% of households in the DMV experie
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
-# Read the data
-recs_raw<- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+# Read the data (commented out as github zip file is now being read in)
+#recs_raw<- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
 
 # Subset for DMV
 recs_DMV_subset<- subset(recs_raw, 
@@ -223,8 +223,8 @@ Here is a breakdown of energy insecurity by state alongside some important house
 
 ```{r, echo=FALSE, warning=FALSE}
 
-# read in data again
-recs_raw<- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+# read in data again (commented out as entire file is run now using zip file on github)
+#recs_raw<- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
 
 # Subset again
 recs_DMV_subset <- subset(recs_raw, 
@@ -323,8 +323,8 @@ As seen above, the states have similar rates of energy insecurity. However, Mary
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(scales) #Using for color and label overlaps
 
-# Read the data (copy pasted from above chunks)
-recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+# Read the data (now reading in from first chunk github zip file)
+#recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
 
 # Subset for Virginia, Maryland, and DC(copy pasted from above chunks)
 recs_DMV_subset <- subset(recs_raw, 
@@ -416,8 +416,8 @@ ggplot(energy_by_income_state,
 ```
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-
-recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
+#See similar above, leaving commented out csv loading in case github breaks
+#recs_raw <- read.csv("C:\\Users\\aksha\\Downloads\\recs2020_public_v7.csv")
 
 # Subset for Virginia, Maryland, and DC
 recs_DMV_subset <- subset(recs_raw, 
